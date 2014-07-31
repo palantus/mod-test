@@ -1,0 +1,80 @@
+<html>
+<head>
+	<link rel="stylesheet" href="/css/cardui-light.css" />
+	<script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+	<script src="/js/CardUI.js"></script>
+</head>
+<body>
+
+<div id="CardUI">
+</div>
+
+
+<script>
+	var card;
+	var ui = new CardUI();
+	ui.init();
+	card = ui.addCard(0, {title: "Many"});
+	
+	for(var i = 0; i < 50; i++)
+		ui.addCard(card.id, {title: "Item " + i, clickable: false});
+		
+	card = ui.addCard(0, {title: "Types"});
+	
+	card = ui.addCard(card.id, {title: "All types", 
+					clickable: false, 
+					content: "This contains all types of controls...",
+					buttons:[
+						{title:"Test", onClick: function(card, btn, inputs){console.log(inputs);}}, 
+						{title:"Sample maximize", showToggle: card.id+2}, 
+						{title:"Sample dialog", showToggle: card.id+3}, 
+						{title:"Sample table", showToggle: card.id+4}
+					], 
+					inputs: [{type:"text", label:"Name"}, {type:"checkbox", label: "Do stuff"}]
+				});
+	
+	ui.addCard(card.id, {title: "Maximize showcase", content: "test", maximize: false, clickable: false, closeButton: true, buttons:[{title:"Click to maximize/minimize", onClick:function(){this.maximize=!this.maximize;ui.draw();}}]});
+	ui.addCard(card.id, {title: "Dialog showcase", content: "test", dialog: false, clickable: false, closeButton: true, buttons:[{title:"Click to show as dialog/dock", onClick:function(){this.dialog=!this.dialog;ui.draw();}}], onClose: function(card){card.dialog = false;}});
+	
+	//Table
+	var rows = [];
+	for(var i = 0; i < 10; i++)
+		rows[i] = ["val "+i, "val 2", "val 3"];
+	var tab = ui.addCard(card.id, {
+								title: "Table", 
+								clickable: false, 
+								table: {
+									selectable: true, 
+									columns: ["Col 1", "Col 2", "Col 3"], 
+									rows: rows, 
+									onSelect: function(row, idx){
+										this.removeAllChilds();
+										this.addChild({title: "Row " + (idx+1), content: row[0], clickable: false});
+										this.setAsCurrent();
+									},
+									onDeselect: function(row, idx){
+										this.removeAllChilds();
+										this.ui.get(this.parentId).setAsCurrent();
+									}
+								}, 
+								buttons:[{title:"Test"}]});
+	
+	card = ui.addCard(0, {title: "Item 3"});
+	card = ui.addCard(card.id, {title: "Item 3 - sub", onClick: function(item){console.log(item.title);}});
+	
+	ui.addCard(card.id, {maxWidth: 1000, title: "Long text", content: "DOM element that has the handler attached. This (sic) this is not necessarily the A link itself. If we have attached the handler to something else, like the containing DIV, we will get the DIV DOM element doesn’t matter which inside elements of the DIV we clicked. In this case we have attached the click_me function to the anchors (A) themselves, so we are safe to know that this.id will give us the ID specified within our A tags."});
+	ui.addCard(card.id, {title: "Buttons", clickable: false, buttons:[{title:"Jump to Item 2", goto: 2}, {title: "Click me", onClick: function(card, btn){alert(card.id + ": " + btn.title);}}]});
+	
+	var settings = ui.addCard(0, {title: "Settings"});
+	
+	ui.addCard(settings.id, {title: "Settings", 
+					clickable: false, 
+					buttons:[{title:"Save", goto: settings, onClick: function(card, btn, inputs){console.log(inputs);}}], 
+					inputs: [{type:"text", label:"Name"}, {type:"checkbox", label: "Do stuff"}]
+				});
+	
+	ui.draw();
+</script>
+
+</body>
+</html>

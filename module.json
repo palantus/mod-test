@@ -1,0 +1,4 @@
+{
+	"main" : "TestModule.js",
+	"deps": ["database"]
+}

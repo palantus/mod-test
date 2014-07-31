@@ -1,0 +1,157 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+	<title>Desktop</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=10,IE=9,IE=8,IE=edge" />
+	<meta name="viewport" content="width=device-width, user-scalable=no">
+	<meta name="mobile-web-app-capable" content="yes">
+	<link rel="shortcut icon" sizes="1024x1024" href="/img/checklist.png">
+	
+	<link rel="stylesheet" type="text/css" href="/css/tablecreator.css" />
+	<link rel="stylesheet" type="text/css" href="/css/popupcreator.css" />
+	<link rel="stylesheet" type="text/css" href="/css/desktopcreator.css" />
+	<link rel="stylesheet" type="text/css" href="/css/searchbar.css" />
+	<link rel="stylesheet" type="text/css" href="/css/taskbar.css" />
+	<link rel="stylesheet" type="text/css" href="/css/rightclickmenu.css" />
+	<link rel="stylesheet" type="text/css" href="/css/notifier.css" />
+	<link rel="stylesheet" type="text/css" href="/css/fieldedit.css" />
+	
+	<script src="/js/jquery.min.js"></script>
+	<script src="/js/framework.js"></script>
+	<script src="/js/tablecreator.js"></script>
+	<script src="/js/popupcreator.js"></script>
+	<script src="/js/desktopcreator.js"></script>
+	<script src="/js/searchbar.js"></script>
+	<script src="/js/lookupcreator.js"></script>
+	<script src="/js/taskbar.js"></script>
+	<script src="/js/rightclickmenu.js"></script>
+	<script src="/js/notifier.js"></script>
+	<script src="/js/fieldedit.js"></script>
+	
+	<script>
+	$(function() {
+		
+	} );
+
+	</script>
+</head>
+<body>
+<div id="content-wrapper">
+	<div id="include_content"></div>
+
+	<div id="desktop"></div>
+	
+	<div id="MainTable"></div>
+	
+	<script type="text/javascript">
+		var items = [
+						{title: "Item 1", query: "val1"},
+						{title: "Item 2", query: "val2"},
+						{title: "Item 3", query: "val3"}
+					];
+		
+		var longContent = "hej<br/>hej<br/>hej<br/>hej<br/>hej<br/>hej<br/>hej<br/>hej<br/>hej<br/>hej<br/>hej<br/>hej<br/>hej<br/>hej<br/>hej<br/>hej<br/>hej<br/>hej<br/>hej<br/>hej<br/>hej<br/>hej<br/>hej<br/>hej<br/>hej<br/>hej<br/>hej<br/>hej<br/>";
+		var data = [{test: "hej 1", test2: "hej2"}, {test: "hej 2"}, {test: "hej 3"}, {test: "hej 3"}, {test: "hej 3"}, {test: "hej 3"}, {test: "hej 3"}, {test: "hej 3"}, {test: "hej 3"}, {test: "hej 3"}, {test: "hej 3"}, {test: "hej 3"}, {test: "hej 3"}, {test: "hej 3"}, {test: "hej 3"}, {test: "hej 3"}, {test: "hej 3"}, {test: "hej 3"}, {test: "hej 3"}, {test: "hej 3"}, {test: "hej 3"}, {test: "hej 3"}, {test: "hej 3"}, {test: "hej 3"}, {test: "hej 3"}, {test: "hej 3"}, {test: "hej 3"}, {test: "hej 3"}, {test: "hej 3"}];
+		
+		var tcSetup = {
+			type: "TableCreator",
+			columns: [{title: "Kolonne 1", dataKey: "test"}, {title: "Kolonne 2", dataKey: "test2"}],
+			dataSource: function(cb, query){cb(this.filterDataFromQuery(data, query));},
+			recordRightClickMenu: {actions: [
+				{title: "Action 1", onClick: function(a, r){console.log(a.title + ", " + r.test);}},
+				{title: "Notify clicked", onClick: function(a, r){new Notifier().show("You clicked on " + r.test);}}
+			]},
+			createRecord: {
+					fields: [{name: "test", title: "Indtast værdi", type: "textarea"}],
+					onCreate: function(record){data.push(record); this.setData(data);}
+				},
+			showRecordsPerPageSelector: true,
+			showFieldsSelector: true
+		}
+		
+		var desktop = new DesktopCreator();
+		desktop.init({
+				elementRef: "desktop",
+				desktopShortcuts: [
+									{title: "Notifier test", icon: "/img/checklist.png", 
+											popup: {	title: "Right click an item", typeId: "TaskList",
+														content: [
+																	tcSetup
+																 ],
+														onShow: function(){this.element.find(".sbbar").focus();}
+													}
+									},
+									{title: "Edit test", 
+										popup: {
+											title: "Test edit", 
+											content: "<table border=1 style='width:100%'><tr>"
+																			+ "<td style='width: 80px'>Text da</td><td>	<div id='field1'>Val 1</div></td></tr>"
+																			+ "<tr><td>Text en</td><td>					<div id='field2'>Val 2</div></td></tr>"
+																			+ "<tr><td>select text only</td><td>		<div id='field3'>value 1</div></td></tr>"
+																			+ "<tr><td>select with ID</td><td>			<div id='field4'>value 1</div></td></tr>"
+																			+ "<tr><td>textarea</td><td>				<div id='field5'>hej med dig - dette er en test</div></td></tr>"
+																			+ "<tr><td>checkbox</td><td>				<div id='field6'>No</div></td></tr>"
+																			+ "</table>",
+											onShow: function(){
+												new FieldEdit("da").init({
+													element: this.element.find("#field1"),
+													type: "text",
+													value: "Val 1",
+													onSave: function(newValue, oldValue, element){console.log("Saved " + newValue); element.html(newValue);}
+												}).attach();
+												new FieldEdit().init({
+													element: this.element.find("#field2"),
+													type: "text",
+													value: "Val 2",
+													onSave: function(newValue, oldValue, element){console.log("Saved " + newValue); element.html(newValue);}
+												}).attach();
+												new FieldEdit().init({
+													element: this.element.find("#field3"),
+													type: "select",
+													value: "value 1",
+													values: ["value 1", "value 2", "value 3"],
+													onSave: function(newValue, oldValue, element){console.log("Saved " + newValue); element.html(newValue);}
+												}).attach();
+												new FieldEdit().init({
+													element: this.element.find("#field4"),
+													type: "select",
+													value: "value 1",
+													values: [{id: 0, label: "value 1"}, {id: 1, label: "value 2"}, {id: 2, label: "value 3"}],
+													onSave: function(newValue, oldValue, element){console.log("Saved " + newValue); element.html(this.options.values[newValue].label);}
+												}).attach();
+												new FieldEdit().init({
+													element: this.element.find("#field5"),
+													type: "textarea",
+													value: "hej med dig - dette er en test",
+													onSave: function(newValue, oldValue, element){console.log("Saved " + newValue); element.html(newValue);}
+												}).attach();
+												new FieldEdit().init({
+													element: this.element.find("#field6"),
+													type: "checkbox",
+													value: false,
+													onSave: function(newValue, oldValue, element){console.log("Saved " + newValue); element.html(newValue ? "Yes" : "No");}
+												}).attach();
+											}
+										}
+									}
+								  ]
+			});
+		desktop.show();
+		
+		var taskbar = new TaskbarCreator();
+		taskbar.init({startMenuDesktop: desktop});
+		taskbar.show();
+		
+	
+		function doSearch(){
+			tableCreator.startLoading();
+			tableCreator.setData([{id: 1, test : "hej"}, {id: 2, test : "hej2"}]);
+			
+		}
+	</script>
+	
+	
+</div>
+</body>
+</html>

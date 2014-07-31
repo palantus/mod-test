@@ -1,0 +1,121 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+	<title>Opgaveliste</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=10,IE=9,IE=8,IE=edge" />
+	<meta name="viewport" content="width=420">
+	<link rel="stylesheet" type="text/css" href="/css/tablecreator.css" />
+	
+	<script src="/js/jquery.min.js"></script>
+	<script src="/js/tablecreator.js"></script>
+	
+	<script>
+	$(function() {
+		enableSearchbar = true;
+		
+		//loadBasicParts(function(){
+			//$("#searchmenu-tab-tabidentifiers").append('<li><a href="#searchmenu-tabs-help">Hjælp til søgning</a></li>');
+			//$("#searchmenu-tabs").append($("#searchmenu-tabs-help"));
+
+    		//onLoad("Opgaveliste");
+		//});
+		doSearch();
+	} );
+
+	</script>
+</head>
+<body>
+<div id="content-wrapper">
+	<div id="include_content"></div>
+
+	<div id="MainTable" style="display:block"></div>
+	
+	<script type="text/javascript">
+	
+		var tableCreator = new TableCreator();
+		tableCreator.init({	elementId: "MainTable",
+							clickable: true,
+							linesPerPage: 20,
+							columns: [
+										{title: "Nummer 1", dataKey: "test"},
+										{title: "Nummer 2", dataKey: "test2"},
+										{title: "Nummer 3", dataKey: "test3"}
+									 ],
+							onClick: function(row, idx){
+								alert(row.test);
+							},
+							createRecord: {
+								fields: [
+											{name: "test", title: "Indtast værdi"},
+											{name: "test2", title: "Indtast værdi", type: "textarea", style: {width: "300px", height: "150px"}},
+											{name: "test3", title: "Vælg værdi", type: "select", values: {"type1" : "Værdi 1", "type2" : "Værdi 2"}}
+										],
+								validate: function(record){return record.test !== "";},
+								onCreate: function(record){tableCreator.data.push(record);tableCreator.setData(tableCreator.data);}
+							},
+							deleteRecord: {
+								onDelete: function(record){alert("Deleting: " + record.test + " (" + record.id + ")");}
+							},
+							editRecord: {
+								fields: [
+											{name: "test", title: "Indtast værdi"},
+											{name: "test2", title: "Indtast værdi", type: "textarea", style: {width: "300px", height: "150px"}},
+											{name: "test3", title: "Vælg værdi", type: "select", values: {"type1" : "Værdi 1", "type2" : "Værdi 2"}}
+										],
+								validate: function(oldRecord, newRecord){return newRecord.test !== "";},
+								onEdit: function(oldRecord, newRecord){alert(newRecord.id + ": " + oldRecord.test + " ændret til " + newRecord.test);}
+							}
+							});
+		tableCreator.draw();
+	
+		function doSearch(){
+			tableCreator.startLoading();
+			tableCreator.setData([{id: 1, test : "hej"}, {id: 2, test : "hej2"}]);
+			
+		}
+	</script>
+	
+	
+</div>
+<div style="display:none;">
+	<div id="searchmenu-tabs-help" class="overflow400">
+		<p><strong>Generelt:</strong>
+			Der søges mens man skriver. Mellemrum betyder et nyt ord, hvor opgaverne SKAL indeholde alle ord man lister.</p>
+		<p><strong>Specielle muligheder:</strong>
+			Hvis man skriver : før et ord, er det en speciel søgestreng. Der er p.t. følgende muligheder: 
+			<ul>
+				<li><b>:lukket</b> - opgaven er lukket</li>
+				<li><b>:åben</b> - opgaven er ikke lukket</li>
+				<li><b>:dev</b> - opgaven har status over oprettet på mindst én version</li>
+				<li><b>:nodev</b> - opgaven har status oprettet på alle versioner</li>
+				<li><b>:std</b> - din standardopgave</li>
+			</ul>
+			Udover ovenstående har man også mulighed for at angive felter, hvor man skriver kolon mellem felt og værdi (ingen mellemrum!). Der er p.t. følgende muligheder:
+			<ul>
+				<li><b>num</b> - en liste af opgavenumre separaret af komma (f.eks. "num:01799,1798")
+				<li><b>status</b> - status for opgaven (udvikling, test, færdig eller lukket)</li>
+				<li><b>hotfix</b> - hotfix for opgaven</li>
+				<li><b>relto</b> - opgaven skal have en relation til et andet opgavenummer som skrives efter kolon</li>
+				<li><b>tag</b> - et tag som opgaven skal have</li>
+				<li><b>type</b> - type af opgaver. Hvis ikke dette er angivet, gives kun officielle opgaver. Skriv 'all' for alle typer.</li>
+				<li><b>order</b> - mulighed for angivelse af hvad man vil sortere efter. "tag", "num", "change" (seneste ændring) eller "oprettet".</li>
+				<li><b>minifix</b> - et minifix som opgaven skal være med i</li>
+				<li><b>element</b> - et element som er vedhæftet opgaven. Man kan angive typen, men er ikke påkrævet. F.eks.: "element:form:LessorPortal" eller "element:LessorPortal".</li>
+				<li><b>max</b> - maksimum antal opgaver som kan returneres</li>
+				<li><b>godkendt</b> - opgaven er godkendt på en given version. F.eks. "godkendt:51". Versionen kan være en af følgende: 50, 51, 60, 62. Kan forkortes "gk".</li>
+				<li><b>godkendt2</b> - opgaven er godkendt af mindst 2 på en given version</li>
+				<li><b>godkendtmig</b> - opgaven er godkendt af "mig" på en given version.</li>
+				<li><b>godkendtandre</b> - opgaven er godkendt af en anden person end "mig" på en given version</li>
+				<li><b>godkendtaf</b> - opgaven er godkendt af en given bruger på en given version. F.eks. "godkendtaf:ahk:51"</li>
+				<li><b>status50</b> - opgaven har en given status på den angivne version. F.eks. "status60:ikkerelevant" eller "status30:test". Kan forkortes hhv. "s6:ir" og "s3:t".</li>
+			</ul>
+			Af lidt mere avancerede muligheder er der følgende:
+			<ul>
+				<li>|| - Hvis man skriver || i stedet for mellemrum mellem to termer, så betyder det "enten den ene eller den anden".
+				<li>! - Hvis man skriver ! før et term, bliver det negeret - dvs. at opgaverne IKKE må opfylde dette kriterie.
+			</p>
+	</div>
+</div>
+</body>
+</html>

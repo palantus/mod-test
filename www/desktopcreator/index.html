@@ -1,0 +1,134 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+	<title>Desktop</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=10,IE=9,IE=8,IE=edge" />
+	<meta name="viewport" content="width=device-width, user-scalable=no">
+	
+	<link rel="stylesheet" type="text/css" href="/css/tablecreator.css" />
+	<link rel="stylesheet" type="text/css" href="/css/popupcreator.css" />
+	<link rel="stylesheet" type="text/css" href="/css/desktopcreator.css" />
+	
+	<script src="/js/jquery.min.js"></script>
+	<script src="/js/tablecreator.js"></script>
+	<script src="/js/popupcreator.js"></script>
+	<script src="/js/desktopcreator.js"></script>
+	
+	<script>
+	$(function() {
+		
+	} );
+
+	</script>
+</head>
+<body>
+<div id="content-wrapper">
+	<div id="include_content"></div>
+
+	<div id="desktop"></div>
+	
+	<div id="MainTable"></div>
+	
+	<script type="text/javascript">
+		
+		var popupTableCreator = new TableCreator();
+		popupTableCreator.init({	elementId: "MainTable",
+							clickable: true,
+							linesPerPage: 20,
+							columns: [
+										{title: "Nummer 1", dataKey: "test"},
+										{title: "Nummer 2", dataKey: "test2"},
+										{title: "Nummer 3", dataKey: "test3"}
+									 ],
+							onClick: function(row, idx){
+								alert(row.test);
+							}
+						});
+		popupTableCreator.setData([{test: "hej", test2: "hej2", test3: "hej3"}]);
+		
+	
+		var popupCreator = new PopupCreator();
+		popupCreator.init({
+								title: "Task list",
+								width: "1000px",
+								hideOnClose: true, 
+								tabs: 
+									[
+										{title: "Tab 1", content: "<h1>Tab 1 content</h1>"},
+										{title: "Tab 3", content: "Tab 2 content<br/><input type='text'></input>"},
+										{title: "Tab 3", content: popupTableCreator}
+									]
+							});
+		// Show is called on row click below
+	
+		var tableCreator = new TableCreator();
+		tableCreator.init({	elementId: "MainTable",
+							clickable: true,
+							linesPerPage: 20,
+							columns: [
+										{title: "Nummer 1", dataKey: "test"},
+										{title: "Nummer 2", dataKey: "test2"},
+										{title: "Nummer 3", dataKey: "test3"}
+									 ],
+							onClick: function(row, idx){
+								//alert(row.test);
+								popupCreator.show();
+							},
+							createRecord: {
+								fields: [
+											{name: "test", title: "Indtast værdi"},
+											{name: "test2", title: "Indtast værdi", type: "textarea", style: {width: "300px", height: "150px"}},
+											{name: "test3", title: "Vælg værdi", type: "select", values: {"type1" : "Værdi 1", "type2" : "Værdi 2"}}
+										],
+								validate: function(record){return record.test !== "";},
+								onCreate: function(record){tableCreator.data.push(record);tableCreator.setData(tableCreator.data);}
+							},
+							deleteRecord: {
+								onDelete: function(record){alert("Deleting: " + record.test + " (" + record.id + ")");}
+							},
+							editRecord: {
+								fields: [
+											{name: "test", title: "Indtast værdi"},
+											{name: "test2", title: "Indtast værdi", type: "textarea", style: {width: "300px", height: "150px"}},
+											{name: "test3", title: "Vælg værdi", type: "select", values: {"type1" : "Værdi 1", "type2" : "Værdi 2"}}
+										],
+								validate: function(oldRecord, newRecord){return newRecord.test !== "";},
+								onEdit: function(oldRecord, newRecord){alert(newRecord.id + ": " + oldRecord.test + " ændret til " + newRecord.test);}
+							}
+							});
+		
+		var desktop = new DesktopCreator();
+		desktop.init({
+				elementRef: "desktop",
+				desktopShortcuts: [
+									{title: "Settings", isFolder: true, 
+											content: [
+														{title: "Site", icon: "/img/settings.png", popup: {title: "Site settings", content: "Site settings"}},
+														{title: "Personal", popup: {title: "Personal", content: "Personal settings"}}
+													 ]},
+									{title: "Assignments", icon: "/img/desktop/checklist.png", 
+														popup: {title: "Assignments", content: popupTableCreator}
+									},
+									{title: "Task list", icon: "/img/desktop/checklist.png", onClick: function(){
+										popupCreator.show();
+									}},
+									{title: "Test of long filenames on desktop shortcuts", icon: "/img/desktop/checklist.png", onClick: function(){
+										popupCreator.show();
+									}}
+								  ]
+			});
+		desktop.show();
+		
+	
+		function doSearch(){
+			tableCreator.startLoading();
+			tableCreator.setData([{id: 1, test : "hej"}, {id: 2, test : "hej2"}]);
+			
+		}
+	</script>
+	
+	
+</div>
+</body>
+</html>

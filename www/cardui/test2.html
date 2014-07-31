@@ -1,0 +1,21 @@
+<html>
+<head>
+	<link rel="stylesheet" href="/css/cardui-light.css" />
+	<script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+	<script src="/js/CardUI.js"></script>
+</head>
+<body>
+
+<div id="CardUI">
+</div>
+
+<a href="#" onclick="showDialog();">Show dialog</a>
+
+<script>
+	function showDialog(){
+		new CardUI().showSimpleDialog({title: "Simple Dialog", content: "This is a sample of how CardUI can be used as a dialog.", width: 300});
+	}
+</script>
+
+</body>
+</html>

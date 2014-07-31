@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+        <title>Test</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=10,IE=9,IE=8,IE=edge" />
+        
+		<script src="/js/jquery.min.js"></script>
+		<script src="/js/jquery.cookie.js"></script>
+        <script src="/js/framework.js"></script>
+</head>
+<body>
+
+Username: <input type="text" id="username"></input>
+Password: <input type="password" id="password"></input>
+<br/>
+
+<button id="ins">Insert record</button>
+<button id="cre">Create table</button>
+<button id="login">Login</button>
+<button id="logout">Logout</button>
+<button id="isloggedin">Logged in?</button>
+
+<div id="status"></div>
+
+<script>
+$("#ins").click(function(){
+	request({module: "database", action: "insert", table: "Test", record: {id: 1}}, handleRes, handleRes);
+});
+$("#cre").click(function(){
+	request({module: "database", action: "query", table: "Test"}, handleRes, handleRes);
+});
+$("#login").click(function(){
+	request({module:"user", type: "login", UserName: $("#username").val(), Password: $("#password").val()}, handleRes, handleRes);
+});
+$("#logout").click(function(){
+	request({module:"user", type: "logout"}, handleRes, handleRes);
+});
+$("#isloggedin").click(function(){
+	request({module:"user", type: "IsLoggedIn"}, handleRes, handleRes);
+});
+
+function handleRes(res){
+	$("#status").html(JSON.stringify(res));
+}
+</script>
+
+</body>
+</html>
